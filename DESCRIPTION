@@ -1,0 +1,23 @@
+Package: zzworld
+Title: WORLD Test Scoring and Edit Distance Analysis
+Version: 0.1.0
+Authors@R:
+    person("Ronald (Ryy) G", "Thomas", , "rgthomas@ucsd.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-1686-4965"))
+Description: Functions for analyzing WORLD test responses in cognitive assessments.
+    Computes edit distance between patient responses and the target word "WORLD",
+    supports multiple scoring methods, and integrates with MMSE (Mini-Mental State
+    Examination) calculations. Useful for clinical research in cognitive assessment.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+URL: https://github.com/rgt47/zzworld
+BugReports: https://github.com/rgt47/zzworld/issues
+Depends:
+    R (>= 4.1.0)
+Suggests:
+    tinytest,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
