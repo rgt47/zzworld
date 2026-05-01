@@ -105,8 +105,11 @@ score_lis <- function(response, target = 'DLROW') {
   t_pos <- setNames(seq_along(t_chars), t_chars)
   s_chars <- strsplit(s, '')[[1]]
   good <- s_chars[s_chars %in% names(t_pos)]
-  good <- good[!duplicated(good)]
   if (length(good) == 0L) return(0)
+  # Keep all occurrences of target letters; the line method allows
+  # picking the best occurrence of any repeated letter, which is
+  # captured by strict-LIS over the full (un-deduplicated) sequence
+  # of target-position values.
   vals <- unname(t_pos[good])
   n <- length(vals)
   dp <- rep(1L, n)
