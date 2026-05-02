@@ -1,4 +1,4 @@
-# zzworld
+# zzworld <a href="https://github.com/rgt47/zzworld"><img src="man/figures/logo.png" align="right" height="138" alt="zzworld hex sticker" /></a>
 
 WORLD Test Scoring and Edit Distance Analysis
 
