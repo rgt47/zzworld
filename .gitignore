@@ -10,3 +10,7 @@ renv/staging/
 .zzcollab.log
 CLAUDE.md
 .cache/
+
+# Technical documentation tree: version-controlled locally (Dropbox),
+# but intentionally not tracked so it is never pushed to public GitHub.
+/docs/
