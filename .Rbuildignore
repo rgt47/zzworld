@@ -12,3 +12,9 @@
 ^\.Rprofile$
 ^\.Rprofile\.local$
 ^\.gitignore$
+^\.cache$
+^\.zzcollab$
+^\.zzcollab-state$
+^zzcollab\.yaml$
+^LICENSE$
+^tooling\.lock$
