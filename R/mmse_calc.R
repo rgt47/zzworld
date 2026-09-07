@@ -4,6 +4,8 @@
 #' Original creation date: 2014-06-24
 #'
 #' @name mmse_calc
+#' @keywords internal
+NULL
 
 # Constants
 .MISSING <- -1L

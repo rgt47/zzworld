@@ -2,12 +2,9 @@
 % Please edit documentation in R/mmse_calc.R
 \name{mmse_calc}
 \alias{mmse_calc}
-\alias{.MISSING}
 \title{MMSE WORLD Backwards Scoring Functions}
-\usage{
-.MISSING
-}
 \description{
 R port of the ADCS EDC mmsecalc2.pm Perl module.
 Original creation date: 2014-06-24
 }
+\keyword{internal}
