@@ -73,8 +73,10 @@ score_position <- function(response, target = 'DLROW') {
 #' Molloy & Standish (1997) SMMSE "line method": the score is the
 #' longest subsequence of the response whose letters appear in the
 #' same order as in the target. Only target letters are considered;
-#' duplicates are counted at first occurrence; non-target letters do
-#' not penalize but also do not contribute. Equivalent to the longest
+#' a repeated letter may be used at whichever occurrence gives the
+#' longer subsequence, which is what the line method allows;
+#' non-target letters do not penalize but also do not contribute.
+#' Equivalent to the longest
 #' increasing subsequence (LIS) of the target-position values of the
 #' response letters.
 #'

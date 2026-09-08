@@ -112,6 +112,13 @@ calc_mmse_attention <- function(correct_word, input_word) {
 #'
 #' @export
 score_world_backwards <- function(response) {
+  # NA in, NA out, matching score_position(), score_lis() and
+  # dlr_scr(). Without this the NA reached levenshtein_distance() and
+  # surfaced as "missing value where TRUE/FALSE needed" from inside
+  # the dynamic-programming loop.
+  if (length(response) == 1L && is.na(response)) {
+    return(NA_real_)
+  }
   response <- toupper(gsub("[^A-Za-z]", "", response))
   calc_mmse_attention("DLROW", response)
 }
@@ -131,7 +138,9 @@ score_world_backwards <- function(response) {
 #'
 #' @export
 score_mundo_backwards <- function(response) {
-
+  if (length(response) == 1L && is.na(response)) {
+    return(NA_real_)
+  }
   response <- toupper(gsub("[^A-Za-z]", "", response))
   calc_mmse_attention("ODNUM", response)
 }
@@ -181,7 +190,13 @@ calc_mmse <- function(params, wordlist = 1L) {
   if (no_missing_attention) {
     input <- ""
     for (fld in attention_fields) {
-      val <- params[[fld]]
+      # Fold case before testing. The `[A-Z]` test distinguishes a
+      # letter from the numeric codes the other fields carry, but
+      # applied to the raw value it also discarded every lowercase
+      # letter: a correct response entered as "dlrow" scored 0 rather
+      # than 5, taking five points off a thirty-point total, while
+      # score_world_backwards() scored the same response 5.
+      val <- toupper(as.character(params[[fld]]))
       if (grepl("[A-Z]", val)) {
         input <- paste0(input, val)
       }

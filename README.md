@@ -23,20 +23,44 @@ devtools::install_github("rgt47/zzworld")
 
 ## Functions
 
-- `edit.dist()` - Calculate edit distance for a response string
-- `edit_distance_valiente()` - Alternative edit distance implementation
-- `compare_scoring_methods()` - Compare different scoring approaches
-- `mmse_calc()` - MMSE score calculations
-- `gen_edit_distance_report()` - Generate analysis reports
+Scoring rules. Folstein's 1975 instruction is ambiguous, so the
+competing readings are provided side by side rather than one being
+chosen:
+
+- `score_position()` - positional correctness (Rule B)
+- `score_lis()` - longest correctly ordered subsequence (Rule C,
+  Beckett et al. / SMMSE line method)
+- `score_examiner()` - sum of the examiner's per-position flags (Rule A)
+- `dlr_scr()`, `dlr_scr_vec()` - Tancredi-Sellers-Ulam deduction score
+- `score_world_backwards()`, `score_mundo_backwards()` - edit-distance
+  score against `DLROW` / `ODNUM`
+
+MMSE:
+
+- `calc_mmse()` - full MMSE total and attention sub-score
+- `calc_mmse_attention()` - attention sub-score alone
+- `levenshtein_distance()` - edit distance between two strings
+
+Comparison and reporting:
+
+- `run_comparison_pipeline()`, `gen_comparison_report()`,
+  `gen_diff_report()`, `gen_edit_distance_reports()`
+- `gen_all_combinations()`, `get_discrepancies()`,
+  `add_stringdist_comparison()`
 
 ## Usage
 
 ```r
 library(zzworld)
 
-# Calculate edit distance for a response
-edit.dist("DLROW")  # Returns 0 (correct backwards spelling)
-edit.dist("DLROW")  # Returns distance from target
+# The same response under each scoring rule
+score_position("DLORW")   # 3 - two letters out of position
+score_lis("DLORW")        # 4 - one transposition
+dlr_scr("DLORW")          # 4 - one Ulam deduction
+
+# Edit distance and the MMSE attention sub-score
+levenshtein_distance("DLROW", "DLORW")   # 2
+score_world_backwards("dlorw")           # 3 - case is folded
 ```
 
 ## License
