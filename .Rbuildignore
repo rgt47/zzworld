@@ -18,3 +18,4 @@
 ^zzcollab\.yaml$
 ^LICENSE$
 ^tooling\.lock$
+^cran-comments\.md$
