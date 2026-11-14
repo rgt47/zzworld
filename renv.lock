@@ -864,6 +864,12 @@
       "Maintainer": "Carson Sievert <carson@rstudio.com>",
       "Repository": "CRAN"
     },
+    "stringdist": {
+      "Package": "stringdist",
+      "Version": "0.9.17",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "tinytest": {
       "Package": "tinytest",
       "Version": "1.4.3",

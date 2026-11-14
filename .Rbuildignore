@@ -19,3 +19,4 @@
 ^LICENSE$
 ^tooling\.lock$
 ^cran-comments\.md$
+^tools$
