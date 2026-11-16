@@ -65,7 +65,7 @@ score_world_backwards("dlorw")           # 3 - case is folded
 
 ## License
 
-GPL-3
+GPL (>= 3)
 
 ## Author
 
