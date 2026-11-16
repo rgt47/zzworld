@@ -11,9 +11,11 @@ dlr_scr(response, target = "WORLD")
 (typically the concatenation of \code{MMDLTR}, \code{MMLLTR}, \code{MMRLTR},
 \code{MMOLTR}, \code{MMWLTR}).}
 
-\item{target}{Character scalar. \code{'WORLD'} (default, English) or
-\code{'MUNDO'} (Spanish — for ADCS bilingual MMSE administrations,
-corresponds to SAS \code{q12span = 1}).}
+\item{target}{Character scalar; the forward spelling of the word the
+participant spells backwards: \code{'WORLD'} (English, the default) or
+\code{'MUNDO'} (Spanish). Case-insensitive. Any other value is an error.
+The expected reversed response (\code{'DLROW'} or \code{'ODNUM'}) is derived
+internally.}
 }
 \value{
 Numeric scalar: a score of 0-5, the special code 8 (refused),
@@ -34,6 +36,9 @@ Special-case codes follow the Rush convention: when the cleaned
 response contains no letters, a raw \code{'8'} returns 8 (refused), a raw
 \code{'9'} or blank returns 0, and any other non-letter content returns
 \code{NA}.
+
+\code{target = 'MUNDO'} is used for ADCS bilingual MMSE administrations
+and corresponds to SAS \code{q12span = 1}.
 }
 \examples{
 dlr_scr('DLROW')   # 5 (perfect)

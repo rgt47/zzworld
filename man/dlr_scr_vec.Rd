@@ -9,7 +9,11 @@ dlr_scr_vec(responses, target = "WORLD")
 \arguments{
 \item{responses}{Character vector of participant responses.}
 
-\item{target}{See \code{\link[=dlr_scr]{dlr_scr()}}.}
+\item{target}{Character scalar; the forward spelling of the word the
+participant spells backwards: \code{'WORLD'} (English, the default) or
+\code{'MUNDO'} (Spanish). Case-insensitive. Any other value is an error.
+The expected reversed response (\code{'DLROW'} or \code{'ODNUM'}) is derived
+internally.}
 }
 \value{
 Numeric vector of the same length as \code{responses}.

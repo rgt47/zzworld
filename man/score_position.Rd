@@ -4,14 +4,21 @@
 \alias{score_position}
 \title{Position-Based Score (Rule B, Folstein heuristic)}
 \usage{
-score_position(response, target = "DLROW")
+score_position(response, target = "WORLD")
 }
 \arguments{
 \item{response}{Character scalar; the participant's verbatim
 response. Non-alphabetic characters are stripped, case is folded.}
 
-\item{target}{Character scalar; the target backwards spelling
-(\code{'DLROW'} or \code{'ODNUM'}).}
+\item{target}{Character scalar; the forward spelling of the word the
+participant spells backwards: \code{'WORLD'} (English, the default) or
+\code{'MUNDO'} (Spanish). Case-insensitive. Any other value is an error.
+The expected reversed response (\code{'DLROW'} or \code{'ODNUM'}) is derived
+internally.
+
+Versions up to 0.2.0 took the reversed spelling here (default
+\code{'DLROW'}). \code{'DLROW'} and \code{'ODNUM'} are still accepted, mapped to
+\code{'WORLD'} and \code{'MUNDO'}, with a deprecation warning.}
 }
 \value{
 Numeric scalar 0-5.
@@ -27,7 +34,8 @@ example in the original paper. Folstein's instruction is ambiguous;
 }
 \examples{
 score_position('DLROW')   # 5
-score_position('DLORW')   # 3 — Folstein 1975 worked example
+score_position('DLORW')   # 3, Folstein 1975 worked example
 score_position('XLROW')   # 4
+score_position('ODNUM', target = 'MUNDO')   # 5
 
 }
