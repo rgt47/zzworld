@@ -1,3 +1,50 @@
+#' Resolve and validate a `target` argument
+#'
+#' Every exported scorer takes `target` as the forward word. Versions up
+#' to 0.2.0 of score_position() and score_lis() took the reversed
+#' spelling instead, so those two pass `allow_reversed = TRUE` to keep
+#' old calls working, with a deprecation warning.
+#'
+#' @param target The user-supplied `target` value.
+#' @param allow_reversed Logical; accept `'DLROW'`/`'ODNUM'` with a
+#'   deprecation warning.
+#' @param caller Name of the calling function, for messages.
+#'
+#' @return `'WORLD'` or `'MUNDO'`.
+#' @noRd
+.resolve_target <- function(target, allow_reversed = FALSE,
+                            caller = 'scorer') {
+  bad_target <- function(shown) {
+    stop(sprintf(paste0(
+      "%s(): `target` must be the forward word 'WORLD' or 'MUNDO' ",
+      "(case-insensitive), not %s."), caller, shown), call. = FALSE)
+  }
+  if (!is.character(target) || length(target) != 1L || is.na(target))
+    bad_target(paste(deparse(target), collapse = ' '))
+  upper <- toupper(target)
+  if (upper %in% c('WORLD', 'MUNDO')) return(upper)
+  reversed <- c(DLROW = 'WORLD', ODNUM = 'MUNDO')
+  if (!(upper %in% names(reversed))) bad_target(sprintf("'%s'", target))
+  forward <- reversed[[upper]]
+  if (!allow_reversed) {
+    stop(sprintf(paste0(
+      "%s(): `target` must be the forward word 'WORLD' or 'MUNDO' ",
+      "(case-insensitive), not the reversed spelling '%s'; ",
+      "use target = '%s'."), caller, target, forward), call. = FALSE)
+  }
+  warning(sprintf(paste0(
+    "%s(): target = '%s' (the reversed spelling) is deprecated; ",
+    "pass the forward word, target = '%s'."), caller, target, forward),
+    call. = FALSE)
+  forward
+}
+
+
+.reverse_word <- function(word) {
+  paste(rev(strsplit(word, '')[[1]]), collapse = '')
+}
+
+
 #' Examiner-Assigned Score (Rule A)
 #'
 #' Returns the sum of per-position correctness flags as recorded by the
@@ -43,21 +90,31 @@ score_examiner <- function(scores, encoding = c('1/2', '1/0')) {
 #'
 #' @param response Character scalar; the participant's verbatim
 #'   response. Non-alphabetic characters are stripped, case is folded.
-#' @param target Character scalar; the target backwards spelling
-#'   (`'DLROW'` or `'ODNUM'`).
+#' @param target Character scalar; the forward spelling of the word the
+#'   participant spells backwards: `'WORLD'` (English, the default) or
+#'   `'MUNDO'` (Spanish). Case-insensitive. Any other value is an error.
+#'   The expected reversed response (`'DLROW'` or `'ODNUM'`) is derived
+#'   internally.
+#'
+#'   Versions up to 0.2.0 took the reversed spelling here (default
+#'   `'DLROW'`). `'DLROW'` and `'ODNUM'` are still accepted, mapped to
+#'   `'WORLD'` and `'MUNDO'`, with a deprecation warning.
 #'
 #' @return Numeric scalar 0-5.
 #'
 #' @examples
 #' score_position('DLROW')   # 5
-#' score_position('DLORW')   # 3 — Folstein 1975 worked example
+#' score_position('DLORW')   # 3, Folstein 1975 worked example
 #' score_position('XLROW')   # 4
+#' score_position('ODNUM', target = 'MUNDO')   # 5
 #'
 #' @export
-score_position <- function(response, target = 'DLROW') {
+score_position <- function(response, target = 'WORLD') {
+  target <- .resolve_target(target, allow_reversed = TRUE,
+                            caller = 'score_position')
   if (is.na(response)) return(NA_real_)
   s <- toupper(gsub('[^A-Za-z]', '', as.character(response)))
-  t_chars <- strsplit(toupper(target), '')[[1]]
+  t_chars <- strsplit(.reverse_word(target), '')[[1]]
   n <- length(t_chars)
   s_chars <- strsplit(s, '')[[1]]
   if (length(s_chars) < n)
@@ -82,8 +139,15 @@ score_position <- function(response, target = 'DLROW') {
 #'
 #' @param response Character scalar; the participant's verbatim
 #'   response. Non-alphabetic characters are stripped, case is folded.
-#' @param target Character scalar; the target backwards spelling
-#'   (`'DLROW'` or `'ODNUM'`).
+#' @param target Character scalar; the forward spelling of the word the
+#'   participant spells backwards: `'WORLD'` (English, the default) or
+#'   `'MUNDO'` (Spanish). Case-insensitive. Any other value is an error.
+#'   The expected reversed response (`'DLROW'` or `'ODNUM'`) is derived
+#'   internally.
+#'
+#'   Versions up to 0.2.0 took the reversed spelling here (default
+#'   `'DLROW'`). `'DLROW'` and `'ODNUM'` are still accepted, mapped to
+#'   `'WORLD'` and `'MUNDO'`, with a deprecation warning.
 #'
 #' @return Numeric scalar 0-5.
 #'
@@ -96,14 +160,17 @@ score_position <- function(response, target = 'DLROW') {
 #'
 #' @examples
 #' score_lis('DLROW')   # 5
-#' score_lis('DLORW')   # 4 — one transposition; LIS = D,L,R,W or D,L,O,W
-#' score_lis('WORLD')   # 1 — only W is in correct relative position
+#' score_lis('DLORW')   # 4, one transposition; LIS = D,L,R,W or D,L,O,W
+#' score_lis('WORLD')   # 1, only W is in correct relative position
+#' score_lis('ODNUM', target = 'MUNDO')   # 5
 #'
 #' @export
-score_lis <- function(response, target = 'DLROW') {
+score_lis <- function(response, target = 'WORLD') {
+  target <- .resolve_target(target, allow_reversed = TRUE,
+                            caller = 'score_lis')
   if (is.na(response)) return(NA_real_)
   s <- toupper(gsub('[^A-Za-z]', '', as.character(response)))
-  t_chars <- strsplit(toupper(target), '')[[1]]
+  t_chars <- strsplit(.reverse_word(target), '')[[1]]
   t_pos <- setNames(seq_along(t_chars), t_chars)
   s_chars <- strsplit(s, '')[[1]]
   good <- s_chars[s_chars %in% names(t_pos)]

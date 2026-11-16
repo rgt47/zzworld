@@ -7,10 +7,12 @@
 score_world_backwards(response)
 }
 \arguments{
-\item{response}{Character string of participant's response}
+\item{response}{Character vector of participants' responses.
+Non-alphabetic characters are stripped and case is folded.}
 }
 \value{
-Integer score from 0 to 5
+Numeric vector of the same length as \code{response}, each element
+a score from 0 to 5, or \code{NA} where the response is \code{NA}.
 }
 \description{
 Convenience wrapper for scoring English WORLD backwards responses.
@@ -19,5 +21,6 @@ Convenience wrapper for scoring English WORLD backwards responses.
 score_world_backwards("DLROW")
 score_world_backwards("DRLOW")
 score_world_backwards("DLORW")
+score_world_backwards(c("DLROW", "dlorw", NA))
 
 }

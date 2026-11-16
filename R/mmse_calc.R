@@ -101,26 +101,35 @@ calc_mmse_attention <- function(correct_word, input_word) {
 #'
 #' Convenience wrapper for scoring English WORLD backwards responses.
 #'
-#' @param response Character string of participant's response
+#' @param response Character vector of participants' responses.
+#'   Non-alphabetic characters are stripped and case is folded.
 #'
-#' @return Integer score from 0 to 5
+#' @return Numeric vector of the same length as `response`, each element
+#'   a score from 0 to 5, or `NA` where the response is `NA`.
 #'
 #' @examples
 #' score_world_backwards("DLROW")
 #' score_world_backwards("DRLOW")
 #' score_world_backwards("DLORW")
+#' score_world_backwards(c("DLROW", "dlorw", NA))
 #'
 #' @export
 score_world_backwards <- function(response) {
-  # NA in, NA out, matching score_position(), score_lis() and
-  # dlr_scr(). Without this the NA reached levenshtein_distance() and
-  # surfaced as "missing value where TRUE/FALSE needed" from inside
-  # the dynamic-programming loop.
-  if (length(response) == 1L && is.na(response)) {
-    return(NA_real_)
-  }
-  response <- toupper(gsub("[^A-Za-z]", "", response))
-  calc_mmse_attention("DLROW", response)
+  .score_backwards(response, "DLROW")
+}
+
+
+# Scores element-wise so a data-frame column gets one score per row;
+# levenshtein_distance() only reads the first element of its inputs.
+# NA in, NA out, matching score_position(), score_lis() and dlr_scr():
+# an NA reaching levenshtein_distance() surfaces as "missing value
+# where TRUE/FALSE needed" from inside the dynamic-programming loop.
+.score_backwards <- function(response, correct_word) {
+  vapply(response, function(r) {
+    if (is.na(r)) return(NA_real_)
+    as.numeric(calc_mmse_attention(correct_word,
+                                   toupper(gsub("[^A-Za-z]", "", r))))
+  }, FUN.VALUE = numeric(1L), USE.NAMES = FALSE)
 }
 
 
@@ -128,21 +137,20 @@ score_world_backwards <- function(response) {
 #'
 #' Convenience wrapper for scoring Spanish MUNDO backwards responses.
 #'
-#' @param response Character string of participant's response
+#' @param response Character vector of participants' responses.
+#'   Non-alphabetic characters are stripped and case is folded.
 #'
-#' @return Integer score from 0 to 5
+#' @return Numeric vector of the same length as `response`, each element
+#'   a score from 0 to 5, or `NA` where the response is `NA`.
 #'
 #' @examples
 #' score_mundo_backwards("ODNUM")
 #' score_mundo_backwards("ODMUN")
+#' score_mundo_backwards(c("ODNUM", "odmun", NA))
 #'
 #' @export
 score_mundo_backwards <- function(response) {
-  if (length(response) == 1L && is.na(response)) {
-    return(NA_real_)
-  }
-  response <- toupper(gsub("[^A-Za-z]", "", response))
-  calc_mmse_attention("ODNUM", response)
+  .score_backwards(response, "ODNUM")
 }
 
 

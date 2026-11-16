@@ -1,3 +1,31 @@
+# zzworld (development version)
+
+## Correctness fixes
+
+* **`target` now means the same thing in every scorer, and is
+  validated.** `dlr_scr()` and `dlr_scr_vec()` took the forward word
+  (`'WORLD'`/`'MUNDO'`), while `score_position()` and `score_lis()`
+  took the reversed spelling (`'DLROW'`/`'ODNUM'`), so the natural call
+  `score_lis('ODNUM', target = 'MUNDO')` scored a perfect Spanish
+  response 1 and `dlr_scr('ODNUM', target = 'ODNUM')` scored it 0. No
+  function validated `target`, so `target = 'DINOSAUR'` was accepted
+  silently. All four functions now take the forward word, `'WORLD'`
+  (the default) or `'MUNDO'`, case-insensitively, and derive the
+  reversed spelling internally; any other value is an error.
+  `score_position()` and `score_lis()` still accept `'DLROW'` and
+  `'ODNUM'`, mapped to `'WORLD'` and `'MUNDO'`, with a deprecation
+  warning; `dlr_scr()` and `dlr_scr_vec()`, which never used the
+  reversed form, reject it with an error naming the forward word.
+
+* **`score_world_backwards()` and `score_mundo_backwards()` scored only
+  the first element of a vector.** `score_world_backwards(c('XXXXX',
+  'DLROW'))` returned the single value 0 with no warning, so scoring a
+  data-frame column silently produced one recycled score. Both
+  functions are now vectorized: they return a numeric vector of the
+  same length as the input, with `NA` for each `NA` response. The
+  return type is now double rather than integer, and a zero-length
+  input returns `numeric(0)` rather than an error.
+
 # zzworld 0.2.0
 
 ## Correctness fixes

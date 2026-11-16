@@ -14,12 +14,17 @@
 #' `'9'` or blank returns 0, and any other non-letter content returns
 #' `NA`.
 #'
+#' `target = 'MUNDO'` is used for ADCS bilingual MMSE administrations
+#' and corresponds to SAS `q12span = 1`.
+#'
 #' @param response Character scalar. The participant's verbatim response
 #'   (typically the concatenation of `MMDLTR`, `MMLLTR`, `MMRLTR`,
 #'   `MMOLTR`, `MMWLTR`).
-#' @param target Character scalar. `'WORLD'` (default, English) or
-#'   `'MUNDO'` (Spanish — for ADCS bilingual MMSE administrations,
-#'   corresponds to SAS `q12span = 1`).
+#' @param target Character scalar; the forward spelling of the word the
+#'   participant spells backwards: `'WORLD'` (English, the default) or
+#'   `'MUNDO'` (Spanish). Case-insensitive. Any other value is an error.
+#'   The expected reversed response (`'DLROW'` or `'ODNUM'`) is derived
+#'   internally.
 #'
 #' @return Numeric scalar: a score of 0-5, the special code 8 (refused),
 #'   or `NA` (uncodable).
@@ -46,6 +51,7 @@
 #'
 #' @export
 dlr_scr <- function(response, target = 'WORLD') {
+  target <- .resolve_target(target, caller = 'dlr_scr')
   if (length(response) != 1L)
     stop('dlr_scr() is scalar; use vapply() or purrr::map_dbl() to vectorize')
   if (is.na(response)) return(NA_real_)
@@ -60,7 +66,7 @@ dlr_scr <- function(response, target = 'WORLD') {
     if (grepl('^\\s*$', raw))           return(0)
     return(NA_real_)
   }
-  letter_map <- if (toupper(target) == 'MUNDO')
+  letter_map <- if (target == 'MUNDO')
     c(M = 5L, U = 4L, N = 3L, D = 2L, O = 1L)
   else
     c(W = 5L, O = 4L, R = 3L, L = 2L, D = 1L)
@@ -111,7 +117,11 @@ dlr_scr <- function(response, target = 'WORLD') {
 #' Vectorized convenience wrapper around [dlr_scr()].
 #'
 #' @param responses Character vector of participant responses.
-#' @param target See [dlr_scr()].
+#' @param target Character scalar; the forward spelling of the word the
+#'   participant spells backwards: `'WORLD'` (English, the default) or
+#'   `'MUNDO'` (Spanish). Case-insensitive. Any other value is an error.
+#'   The expected reversed response (`'DLROW'` or `'ODNUM'`) is derived
+#'   internally.
 #'
 #' @return Numeric vector of the same length as `responses`.
 #'
@@ -120,6 +130,9 @@ dlr_scr <- function(response, target = 'WORLD') {
 #'
 #' @export
 dlr_scr_vec <- function(responses, target = 'WORLD') {
+  # Validated here as well so that a bad target errors even when
+  # `responses` is empty and dlr_scr() is never called.
+  target <- .resolve_target(target, caller = 'dlr_scr_vec')
   vapply(responses, dlr_scr, FUN.VALUE = numeric(1L), target = target,
          USE.NAMES = FALSE)
 }

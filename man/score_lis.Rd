@@ -4,14 +4,21 @@
 \alias{score_lis}
 \title{Longest-Correctly-Ordered Subsequence Score (Rule C)}
 \usage{
-score_lis(response, target = "DLROW")
+score_lis(response, target = "WORLD")
 }
 \arguments{
 \item{response}{Character scalar; the participant's verbatim
 response. Non-alphabetic characters are stripped, case is folded.}
 
-\item{target}{Character scalar; the target backwards spelling
-(\code{'DLROW'} or \code{'ODNUM'}).}
+\item{target}{Character scalar; the forward spelling of the word the
+participant spells backwards: \code{'WORLD'} (English, the default) or
+\code{'MUNDO'} (Spanish). Case-insensitive. Any other value is an error.
+The expected reversed response (\code{'DLROW'} or \code{'ODNUM'}) is derived
+internally.
+
+Versions up to 0.2.0 took the reversed spelling here (default
+\code{'DLROW'}). \code{'DLROW'} and \code{'ODNUM'} are still accepted, mapped to
+\code{'WORLD'} and \code{'MUNDO'}, with a deprecation warning.}
 }
 \value{
 Numeric scalar 0-5.
@@ -30,8 +37,9 @@ response letters.
 }
 \examples{
 score_lis('DLROW')   # 5
-score_lis('DLORW')   # 4 — one transposition; LIS = D,L,R,W or D,L,O,W
-score_lis('WORLD')   # 1 — only W is in correct relative position
+score_lis('DLORW')   # 4, one transposition; LIS = D,L,R,W or D,L,O,W
+score_lis('WORLD')   # 1, only W is in correct relative position
+score_lis('ODNUM', target = 'MUNDO')   # 5
 
 }
 \references{
